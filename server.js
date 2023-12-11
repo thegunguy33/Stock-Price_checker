@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === "test") {
 
 //Routes again?
 app.get('/', (req, res) => {
-  res.send('index.html');
+  res.send('./index.html');
 })
 
 // Middlewares

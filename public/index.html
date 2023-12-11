@@ -1,35 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FreeCodeCamp Stock Checker</title>
-</head>
-<body>
-  <h1>Stock Checker</h1>
-  <label for="stockSymbol">Enter Stock Symbol: </label>
-  <input type="text" id="stockSymbol" placeholder="AAPL">
-  <button onclick="fetchStockInfo()">Get Stock Info</button>
-  <div id="stockInfo"></div>
-
-  <script>
-    async function fetchStockInfo() {
-      const stockSymbolInput = document.getElementById('stockSymbol');
-      const stockInfoDiv = document.getElementById('stockInfo');
-
-      const symbol = stockSymbolInput.value.toUpperCase();
-      const apiUrl = `http://localhost:3000/stock/${symbol}`;
-
-      try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        stockInfoDiv.innerHTML = JSON.stringify(data, null, 2);
-      } catch (error) {
-        console.error('Error:', error);
-        stockInfoDiv.innerHTML = 'Failed to fetch stock information.';
-      }
-    }
-  </script>
-</body>
+<html>
+  <head>
+    <title>Stock Price Checker</title>
+    <link
+      id="favicon"
+      rel="icon"
+      href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png"
+      type="image/x-icon"
+    />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./public/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>ISQA_5 - Nasdaq Stock Price Checker</h1>
+    </header>
+    <div id="userstories">
+      <h3>Example usage:</h3>
+      <code>/api/stock-prices?stock=GOOG</code>
+      <br />
+      <code>/api/stock-prices?stock=GOOG&amp;like=true</code>
+      <br />
+      <code>/api/stock-prices?stock=GOOG&amp;stock=MSFT</code>
+      <br />
+      <code>/api/stock-prices?stock=GOOG&amp;stock=MSFT&amp;like=true</code>
+      <br />
+      <h3>Example return:</h3>
+      <code>{"stockData":{"stock":"GOOG","price":786.90,"likes":1}}</code>
+      <br />
+      <code>
+        {"stockData":[{"stock":"MSFT","price":62.30,"rel_likes":-1},{"stock":"GOOG","price":786.90,"rel_likes":1}]}
+      </code>
+    </div>
+    <hr class="p-50" />
+    <div id="testui">
+      <h2 class="text-align-left">Front-End:</h2>
+      <h3>Get single price and total likes</h3>
+      <form id="testForm2" class="border">
+        <input type="text" name="stock" placeholder="GOOG" required="" />
+        <input type="checkbox" name="like" value="true" /> Like?
+        <br />
+        <button type="submit">Get Price!</button>
+      </form>
+      <h3>Compare and get relative likes</h3>
+      <form id="testForm" class="border">
+        <input type="text" name="stock" placeholder="GOOG" required="" />
+        <input type="text" name="stock" placeholder="MSFT" required="" />
+        <input type="checkbox" name="like" value="true" /> Like both?
+        <br />
+        <button type="submit">Get Price!</button>
+      </form>
+      <code id="jsonResult"></code>
+    </div>
+    <hr class="m-50 mt-200" />
+    <script src="/public/script.js"></script>
+  </body>
 </html>

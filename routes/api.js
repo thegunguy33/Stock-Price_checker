@@ -1,5 +1,4 @@
 'use strict';
-
 const StockModel = require('../models/stockModel');
 const express = require('express');
 const fetch = require('node-fetch');
@@ -21,22 +20,24 @@ async function saveStock(stock, like, ip) {
   let saved = {};
   const foundStock = await findStock(stock);
   if (!foundStock) {
-    saved = await createStock(stock, like, ip);
+    const createsaved = await createStock(stock, like, ip);
+    saved = createsaved;
+    return saved;
   } else {
     if (like && foundStock.likes.indexOf(ip) === -1) {
       foundStock.likes.push(ip);
     }
     saved = await foundStock.save();
+    return saved;
   }
-  return saved;
 }
 
-async function getStock(symbol) {
+async function getStock(stock) {
   const response = await fetch(
-    `https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${symbol}/quote`
+    `https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${stock}/quote`
   );
-  const { symbol: stock, latestPrice } = await response.json();
-  return { stock, latestPrice };
+  const { symbol, latestPrice } = await response.json();
+  return { symbol, latestPrice };
 }
 
 module.exports = function (app) {
@@ -45,25 +46,34 @@ module.exports = function (app) {
 
     if (Array.isArray(stock) && stock.length === 2) {
       const [symbol1, symbol2] = stock;
-      const { stock: stock1, latestPrice: latestPrice1 } = await getStock(symbol1);
-      const { stock: stock2, latestPrice: latestPrice2 } = await getStock(symbol2);
+      const { symbol, latestPrice } = await getStock(symbol1);
+      const { symbol: symbol2Alias, latestPrice: latestPrice2 } = await getStock(
+        symbol2
+      );
 
-      const firstStock = await saveStock(stock1, like, req.ip);
-      const secondStock = await saveStock(stock2, like, req.ip);
+      const firstStock = await saveStock(symbol1, like, req.ip);
+      const secondStock = await saveStock(symbol2, like, req.ip);
 
       let stockData = [];
-      if (!stock1 || !stock2) {
+      if (!symbol) {
         stockData.push({
           rel_likes: firstStock.likes.length - secondStock.likes.length,
         });
       } else {
         stockData.push({
-          stock: stock1,
-          price: latestPrice1,
+          stock: symbol,
+          price: latestPrice,
           rel_likes: firstStock.likes.length - secondStock.likes.length,
         });
+      }
+
+      if (!symbol2) {
         stockData.push({
-          stock: stock2,
+          rel_likes: secondStock.likes.length - firstStock.likes.length,
+        });
+      } else {
+        stockData.push({
+          stock: symbol2,
           price: latestPrice2,
           rel_likes: secondStock.likes.length - firstStock.likes.length,
         });
@@ -72,24 +82,29 @@ module.exports = function (app) {
       res.json({
         stockData,
       });
-    } else if (typeof stock === 'string') {
-      const { stock, latestPrice } = await getStock(stock);
-      if (!stock) {
-        res.json({ stockData: { likes: like ? 1 : 0 } });
-      } else {
-        const oneStockData = await saveStock(stock, like, req.ip);
-        console.log('One Stock Data', oneStockData);
-
-        res.json({
-          stockData: {
-            stock,
-            price: latestPrice,
-            likes: oneStockData.likes.length,
-          },
-        });
-      }
-    } else {
-      res.status(400).json({ error: 'Invalid request' });
+      return;
     }
+
+    if (typeof stock === 'string') {
+      const { symbol, latestPrice } = await getStock(stock);
+      if (!symbol) {
+        res.json({ stockData: { likes: like ? 1 : 0 } });
+        return;
+      }
+
+      const oneStockData = await saveStock(symbol, like, req.ip);
+      console.log('One Stock Data', oneStockData);
+
+      res.json({
+        stockData: {
+          stock: symbol,
+          price: latestPrice,
+          likes: oneStockData.likes.length,
+        },
+      });
+      return;
+    }
+
+    res.status(400).json({ error: 'Invalid request' });
   });
 };

@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const cors = require("cors");
 const axios = require('axios');
+const path = require('path');  // Added for path module
 require('./db-connection');
 
 const app = express();
@@ -13,7 +14,6 @@ const app = express();
 if (process.env.NODE_ENV === "test") {
   mongoose.connect("mongodb://localhost/test_database"); // Replace with your test MongoDB connection string
 } else {
-  // Connect to MongoDB Atlas using the provided connection string
   mongoose
     .connect(
       "mongodb+srv://jaredbennett33:W4rz0n3@cluster0.ibs8sxe.mongodb.net/?retryWrites=true&w=majority",
@@ -30,19 +30,22 @@ if (process.env.NODE_ENV === "test") {
     });
 }
 
-//Routes again?
+// Serve static files from the "public" folder
+app.use(express.static('public'));
+
+// Routes
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
 // Middlewares
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static('public'));
 
 // Content Security Policy Middleware
 app.use((req, res, next) => {
+  // Specify your Content Security Policy based on your application's needs
   res.setHeader("Content-Security-Policy", "default-src 'self'");
   return next();
 });

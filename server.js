@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const cors = require("cors");
 const axios = require('axios');
+require('./db-connection');
 
 const app = express();
 

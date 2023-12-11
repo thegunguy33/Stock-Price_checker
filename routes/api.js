@@ -8,4 +8,5 @@ const StockController = require('../controllers/stockController');
 router.route('/stock-prices')
   .get(StockController.getStockPrices);
 
+
 module.exports = router;

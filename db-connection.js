@@ -1,36 +1,27 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-// Your MongoDB connection string
-const uri = 'mongodb+srv://jaredbennett33:W4rz0n3@cluster0.ibs8sxe.mongodb.net/test?retryWrites=true&w=majority';
-
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-const connection = mongoose.connection;
-
-connection.once('open', () => {
-  console.log('MongoDB database connection established successfully');
+const db = mongoose.connect('mongodb+srv://jaredbennett33:W4rz0n3@cluster0.ibs8sxe.mongodb.net/test?retryWrites=true&w=majority', {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
 });
 
-// Event listeners for connection status
-connection.on('connected', () => {
-  console.log('Mongoose connected to ' + uri);
+mongoose.connection.on("connected", () => {
+  console.log("Mongoose connected to the database");
 });
 
-connection.on('error', (err) => {
-  console.log('Mongoose connection error: ' + err);
+mongoose.connection.on("error", (err) => {
+  console.error("Mongoose connection error:", err);
 });
 
-connection.on('disconnected', () => {
-  console.log('Mongoose disconnected');
+mongoose.connection.on("disconnected", () => {
+  console.log("Mongoose disconnected from the database");
 });
 
-// Gracefully close the connection on process termination
-process.on('SIGINT', () => {
-  connection.close(() => {
-    console.log('Mongoose disconnected through app termination');
+process.on("SIGINT", () => {
+  mongoose.connection.close(() => {
+    console.log("Mongoose disconnected through app termination");
     process.exit(0);
   });
 });
 
-// Export the connection
-module.exports = connection;
+module.exports = db;

@@ -32,13 +32,14 @@ if (process.env.NODE_ENV === "test") {
 
 //Routes again?
 app.get('/', (req, res) => {
-  res.send('./index.html');
-})
+  res.sendFile(__dirname + '/public/index.html');
+});
 
 // Middlewares
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static('public'));
 
 // Content Security Policy Middleware
 app.use((req, res, next) => {

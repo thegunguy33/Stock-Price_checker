@@ -1,5 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const assert = chai.assert;
 const app = require('../server'); // Assumes your server file is in the root directory
 
 chai.use(chaiHttp);

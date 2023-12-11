@@ -1,10 +1,11 @@
 'use strict';
 
-module.exports = function (app) {
+const express = require('express');
+const router = express.Router();
+const StockController = require('../controllers/stockController');
 
-  app.route('/api/stock-prices')
-    .get(function (req, res){
-      
-    });
-    
-};
+// Routes for the Stock API
+router.route('/stock-prices')
+  .get(StockController.getStockPrices);
+
+module.exports = router;

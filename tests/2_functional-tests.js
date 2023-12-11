@@ -1,10 +1,9 @@
-const chaiHttp = require('chai-http');
 const chai = require('chai');
-const assert = chai.assert;
-const server = require('../server');
+const chaiHttp = require('chai-http');
+const app = require('../server'); // Assumes your server file is in the root directory
 
 chai.use(chaiHttp);
 
-suite('Functional Tests', function() {
-
+describe('Functional Tests', () => {
+  // Write your functional tests here
 });

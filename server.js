@@ -2,7 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const helmet = require('helmet'); // Use helmet for security features
+const helmet = require('helmet');
 const cors = require('cors');
 
 const app = express();
@@ -11,13 +11,29 @@ const app = express();
 if (process.env.NODE_ENV === 'test') {
   mongoose.connect('mongodb://localhost/test_database'); // Replace with your test MongoDB connection string
 } else {
-  mongoose.connect('mongodb://localhost/production_database'); // Replace with your production MongoDB connection string
+  // Connect to MongoDB Atlas using the provided connection string
+  mongoose.connect('mongodb+srv://jaredbennett33:W4rz0n3@cluster0.ibs8sxe.mongodb.net/?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('Connected to MongoDB Atlas');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB Atlas:', error.message);
+  });
 }
 
 // Middlewares
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors());
+
+// Content Security Policy Middleware
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "default-src 'self'");
+  return next();
+});
 
 // API routes
 const apiRoutes = require('./routes/api');

@@ -1,5 +1,5 @@
 'use strict';
-
+const StockModel = require('../models/stockModel');
 const express = require('express');
 const router = express.Router();
 const StockController = require('../controllers/stockController');

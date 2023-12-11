@@ -1,68 +1,65 @@
 "use strict";
+require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const helmet = require("helmet");
 const cors = require("cors");
-const axios = require('axios');
-const path = require('path');  // Added for path module
-require('./db-connection');
+
+const apiRoutes = require("./routes/api.js");
+const fccTestingRoutes = require("./routes/fcctesting.js");
+const runner = require("./test-runner");
+const helmet = require("helmet");
+require("./db-connection");
 
 const app = express();
 
-// Set NODE_ENV to test without quotes
-if (process.env.NODE_ENV === "test") {
-  mongoose.connect("mongodb://localhost/test_database"); // Replace with your test MongoDB connection string
-} else {
-  mongoose
-    .connect(
-      "mongodb+srv://jaredbennett33:W4rz0n3@cluster0.ibs8sxe.mongodb.net/?retryWrites=true&w=majority",
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-    )
-    .then(() => {
-      console.log("Connected to MongoDB Atlas");
-    })
-    .catch((error) => {
-      console.error("Error connecting to MongoDB Atlas:", error.message);
-    });
-}
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://code.jquery.com/jquery-2.2.1.min.js"],
+      styleSrc: ["'self'"],
+    },
+  })
+);
 
-// Serve static files from the "public" folder
-app.use(express.static('public'));
+app.use("/public", express.static(process.cwd() + "/public"));
 
-// Routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/index.html'));
-});
+app.use(cors({ origin: "*" })); //For FCC testing purposes only
 
-// Middlewares
-app.use(helmet());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Content Security Policy Middleware
-app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'");
-  return next();
+//Index page (static HTML)
+app.route("/").get(function (req, res) {
+  res.sendFile(process.cwd() + "/views/index.html");
 });
 
-// API routes
-const apiRoutes = require("./routes/api");
-app.use("/api", apiRoutes);
+//For FCC testing purposes
+fccTestingRoutes(app);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something went wrong!");
+//Routing for API
+apiRoutes(app);
+
+//404 Not Found Middleware
+app.use(function (req, res, next) {
+  res.status(404).type("text").send("Not Found");
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+//Start our server and tests!
+app.listen(process.env.PORT || 3000, function () {
+  console.log("Listening on port " + process.env.PORT);
+  if (process.env.NODE_ENV === "test") {
+    console.log("Running Tests...");
+    setTimeout(function () {
+      try {
+        runner.run();
+      } catch (e) {
+        var error = e;
+        console.log("Tests are not valid:");
+        console.log(error);
+      }
+    }, 3500);
+  }
 });
 
-module.exports = app; // Export app for testing
+module.exports = app; //for testing

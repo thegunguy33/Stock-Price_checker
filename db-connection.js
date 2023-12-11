@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 // Your MongoDB connection string
-const dbURI = process.env.MONGODB_URI || 'mongodb+srv://jaredbennett33:W4rz0n3@cluster0.ibs8sxe.mongodb.net/?retryWrites=true&w=majority';
+const dbURI = process.env.MONGODB_URI || `mongodb+srv://jaredbennett33:W4rz0n3@ac-e4jydxs.mongodb.net/test?retryWrites=true&w=majority
+`;
 
 // Connect to MongoDB
 mongoose.connect(dbURI, {

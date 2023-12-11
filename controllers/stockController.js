@@ -1,5 +1,5 @@
 const axios = require('axios');
-const Stock = require('../models/stock');
+const Stock = require('../models/stockModel');
 
 const StockController = {
   getStockPrices: async (req, res, next) => {

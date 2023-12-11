@@ -45,8 +45,7 @@ app.use(cors());
 
 // Content Security Policy Middleware
 app.use((req, res, next) => {
-  // Specify your Content Security Policy based on your application's needs
-  res.setHeader("Content-Security-Policy", "default-src 'self'");
+  res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'");
   return next();
 });
 

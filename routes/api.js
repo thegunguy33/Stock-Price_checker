@@ -8,5 +8,6 @@ const StockController = require('../controllers/stockController');
 router.route('/stock-prices')
   .get(StockController.getStockPrices);
 
+//https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/[symbol]/quote
 
 module.exports = router;

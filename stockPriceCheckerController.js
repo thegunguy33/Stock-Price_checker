@@ -19,8 +19,11 @@ exports.getStockPrice = async (req, res, next) => {
         await newStock.save();
       }
 
-      const stockPrice = response.data.latestPrice;
-      res.json({ stock: symbol, price: stockPrice });
+      // Set the content type header to indicate JSON
+      res.header('Content-Type', 'application/json');
+      
+      // Send the response as a JSON string
+      res.send(JSON.stringify({ stock: symbol, price: response.data.latestPrice }));
     }
   } catch (error) {
     next(error);

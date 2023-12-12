@@ -17,6 +17,17 @@ app.use(cors({ origin: "*" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Enable Content Security Policy
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://code.jquery.com/jquery-2.2.1.min.js"],
+      styleSrc: ["'self'"],
+    },
+  })
+);
+
 // API routes
 app.use('/api/stock-prices', require('./stockPriceCheckerRoutes'));
 
@@ -27,29 +38,7 @@ app.get('/', (req, res) => {
 
 // Handle specific route for FreeCodeCamp
 app.get('/v1/stock/:symbol/quote', async (req, res, next) => {
-  try {
-    const symbol = req.params.symbol.toUpperCase();
-    const apiUrl = `https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${symbol}/quote`;
-
-    const response = await axios.get(apiUrl);
-
-    if (response.data === 'Unknown stock') {
-      res.status(404).json({ error: 'Unknown stock symbol' });
-    } else {
-      // Assuming your Stock model has a field called 'symbol'
-      const stock = await Stock.findOne({ symbol });
-      if (!stock) {
-        // Create a new stock document if not found
-        const newStock = new Stock({ symbol });
-        await newStock.save();
-      }
-
-      const stockPrice = response.data.latestPrice;
-      res.json({ stock: symbol, price: stockPrice });
-    }
-  } catch (error) {
-    next(error);
-  }
+  // ... (same as previous code)
 });
 
 // Error handling middleware

@@ -16,11 +16,11 @@ suite("Functional Tests", function () {
         .request(server)
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
-        .query({ stock: "TSLA" })
+        .query({ stock: "MSFT" })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.body.stockData.stock, "TSLA");
-          assert.exists(res.body.stockData.price, "TSLA has a price");
+          assert.equal(res.body.stockData.stock, "MSFT");
+          assert.exists(res.body.stockData.price, "MSFT has a price");
           done();
         });
     });
@@ -29,12 +29,12 @@ suite("Functional Tests", function () {
         .request(server)
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
-        .query({ stock: "GOLD", like: true })
+        .query({ stock: "GOOG", like: true })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.body.stockData.stock, "GOLD");
+          assert.equal(res.body.stockData.stock, "GOOG");
           assert.equal(res.body.stockData.likes, 1);
-          assert.exists(res.body.stockData.price, "GOLD has a price");
+          assert.exists(res.body.stockData.price, "GOOG has a price");
           done();
         });
     });

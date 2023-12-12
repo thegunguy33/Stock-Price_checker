@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 
-const StockSchema = new Schema({
-    symbol: { type: String, required: true },
-    likes: { type: [String], default: [] },
+const stockSchema = new mongoose.Schema({
+  symbol: {
+    type: String,
+    enum: ['msft', 'goog', 'aapl', 'tsla', /* add other allowed symbols */],
+    required: true,
+  },
+  // Add other fields as needed
 });
-const Stock = mongoose.model('Stock', StockSchema);
 
-exports.Stock = Stock;
+const Stock = mongoose.model('Stock', stockSchema);
+
+module.exports = { Stock };

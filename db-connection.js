@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
 
-const db = mongoose.connect('mongodb+srv://jaredbennett33:W4rz0n3@cluster0.ibs8sxe.mongodb.net/test?retryWrites=true&w=majority', {
-  useUnifiedTopology: true,
+// Replace the connection string with your updated format
+const connectionString = "mongodb+srv://jaredbennett33:W4rz0n3@ac-e4jydxs-shard-0.ibs8sxe.mongodb.net/test?authSource=admin&replicaSet=atlas-3ar1yg-shard-0&retryWrites=true&w=majority";
+
+mongoose.connect(connectionString, {
   useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 mongoose.connection.on("connected", () => {
@@ -24,4 +27,4 @@ process.on("SIGINT", () => {
   });
 });
 
-module.exports = db;
+module.exports = mongoose.connection;

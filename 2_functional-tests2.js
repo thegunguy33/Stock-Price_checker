@@ -1,10 +1,10 @@
+// test file
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('./api');
+const server = require('./server'); // Import the exported server
 
 chai.use(chaiHttp);
 const expect = chai.expect;
-
 describe('Stock Price Checker API Functional Tests', () => {
   it('should view one stock', (done) => {
     chai.request(app)

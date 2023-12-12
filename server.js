@@ -1,65 +1,83 @@
+// server.js
 "use strict";
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
-const apiRoutes = require("./routes/api.js");
-const fccTestingRoutes = require("./routes/fcctesting.js");
-const runner = require("./test-runner");
 const helmet = require("helmet");
-require("./db-connection");
+const runner = require("./test-runner");
+const db = require("./db-connection");
+const { Stock } = require('./models'); // Import the Stock model from models.js
 
 const app = express();
 
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://code.jquery.com/jquery-2.2.1.min.js"],
-      styleSrc: ["'self'"],
-    },
-  })
-);
-
-app.use("/public", express.static(process.cwd() + "/public"));
-
-app.use(cors({ origin: "*" })); //For FCC testing purposes only
-
-app.use(bodyParser.json());
+// Middleware
+app.use(helmet());
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-//Index page (static HTML)
-app.route("/").get(function (req, res) {
-  res.sendFile(process.cwd() + "/views/index.html");
+// API routes
+app.use('/api/stock-prices', require('./stockPriceCheckerRoutes'));
+
+// Root path
+app.get('/', (req, res) => {
+  res.send('Hello, this is your Express server for stock-price-checker');
 });
 
-//For FCC testing purposes
-fccTestingRoutes(app);
+// Handle specific route for FreeCodeCamp
+app.get('/v1/stock/:symbol/quote', async (req, res, next) => {
+  try {
+    const symbol = req.params.symbol.toUpperCase();
+    const apiUrl = `https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${symbol}/quote`;
 
-//Routing for API
-apiRoutes(app);
+    const response = await axios.get(apiUrl);
 
-//404 Not Found Middleware
-app.use(function (req, res, next) {
-  res.status(404).type("text").send("Not Found");
+    if (response.data === 'Unknown stock') {
+      res.status(404).json({ error: 'Unknown stock symbol' });
+    } else {
+      // Assuming your Stock model has a field called 'symbol'
+      const stock = await Stock.findOne({ symbol });
+      if (!stock) {
+        // Create a new stock document if not found
+        const newStock = new Stock({ symbol });
+        await newStock.save();
+      }
+
+      const stockPrice = response.data.latestPrice;
+      res.json({ stock: symbol, price: stockPrice });
+    }
+  } catch (error) {
+    next(error);
+  }
 });
 
-//Start our server and tests!
-app.listen(process.env.PORT || 3000, function () {
-  console.log("Listening on port " + process.env.PORT);
-  if (process.env.NODE_ENV === "test") {
-    console.log("Running Tests...");
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
+
+// Serve static files
+app.use('/public', express.static(process.cwd() + '/public'));
+
+// Start our server and tests!
+const PORT = process.env.PORT || 3001;
+
+const server = app.listen(PORT, function () {
+  console.log("Listening on port " + PORT);
+  if (process.env.NODE_ENV === 'test') {
+    console.log('Running Tests...');
     setTimeout(function () {
       try {
         runner.run();
       } catch (e) {
         var error = e;
-        console.log("Tests are not valid:");
+        console.log('Tests are not valid:');
         console.log(error);
       }
     }, 3500);
   }
 });
 
-module.exports = app; //for testing
+module.exports = server; // Export the server for testing

@@ -11,7 +11,7 @@ async function createStock(stock, like, ip) {
 }
 
 async function findStock(stock) {
-  return await StockModel.findOne({ symbol: stock}).exec();
+  return await Stock.findOne({ symbol: stock}).exec();
 }
 
 async function saveStock(stock, like, ip) {

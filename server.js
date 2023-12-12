@@ -1,33 +1,30 @@
 'use strict';
 require('dotenv').config();
-const express     = require('express');
-const bodyParser  = require('body-parser');
-const cors        = require('cors');
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-const apiRoutes         = require('./routes/api.js');
-const fccTestingRoutes  = require('./routes/fcctesting.js');
-const runner            = require('./test-runner');
-
-const helmet    = require('helmet');
-require('./db-connection')
+const apiRoutes = require('./routes/api.js');
+const fccTestingRoutes = require('./routes/fcctesting.js');
+const runner = require('./test-runner');
+const helmet = require("helmet");
+require("./db-connection");
 
 const app = express();
-
 
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"], 
-      styleSrc: ["'self'"], 
+      scriptSrc: ["'self'", "https://code.jquery.com/jquery-2.2.1.min.js"],
+      styleSrc: ["'self'"],
     },
   })
-);
-
+)
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
-app.use(cors({origin: '*'})); //For FCC testing purposes only
+app.use(cors({ origin: '*' })); //For FCC testing purposes only
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -42,10 +39,10 @@ app.route('/')
 fccTestingRoutes(app);
 
 //Routing for API 
-apiRoutes(app);  
-    
+apiRoutes(app);
+
 //404 Not Found Middleware
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.status(404)
     .type('text')
     .send('Not Found');
@@ -54,16 +51,16 @@ app.use(function(req, res, next) {
 //Start our server and tests!
 const listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
-  if(process.env.NODE_ENV==='test') {
+  if (process.env.NODE_ENV === 'test') {
     console.log('Running Tests...');
     setTimeout(function () {
       try {
         runner.run();
-      } catch(e) {
+      } catch (e) {
         console.log('Tests are not valid:');
         console.error(e);
       }
-    }, 3500);
+    }, 3000);
   }
 });
 

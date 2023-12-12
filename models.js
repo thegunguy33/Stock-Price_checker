@@ -1,9 +1,10 @@
+// models.js
 const mongoose = require('mongoose');
 
 const stockSchema = new mongoose.Schema({
   symbol: {
     type: String,
-    enum: ['msft', 'goog', 'aapl', 'tsla', /* add other allowed symbols */],
+    enum: ['MSFT', 'GOOG', 'AAPL', 'TSLA', /* add other allowed symbols */],
     required: true,
   },
   // Add other fields as needed

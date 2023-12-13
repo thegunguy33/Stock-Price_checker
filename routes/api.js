@@ -1,8 +1,8 @@
-const StockModel = require("./model").Stock;
+const Stock = require("./model").Stock;
 const fetch = require("node-fetch");
 
 async function createStock(stock, like, ip) {
-  const newStock = new StockModel({
+  const newStock = new Stock({
     symbol: stock,
     likes: like ? [ip] : [],
   });

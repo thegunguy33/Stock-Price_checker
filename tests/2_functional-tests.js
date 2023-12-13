@@ -10,6 +10,7 @@ suite('Functional Tests', function () {
     test("Viewing one stock: GET request to /api/stock-prices", function (done) {
       chai
         .request(server)
+        .keepOpen()
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
         .query({ stock: "GOOG" })
@@ -23,6 +24,7 @@ suite('Functional Tests', function () {
     test("Viewing one stock and liking it: GET request to /api/stock-prices", function (done) {
       chai
         .request(server)
+        .keepOpen()
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
         .query({ stock: "GOLD", like: true })
@@ -37,6 +39,7 @@ suite('Functional Tests', function () {
     test("Viewing the same stock and liking it again: GET request to /api/stock-prices", function (done) {
       chai
         .request(server)
+        .keepOpen()
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
         .query({ stock: "GOLD", like: true })
@@ -51,6 +54,7 @@ suite('Functional Tests', function () {
     test("Viewing two stocks: GET request to /api/stock-prices", function (done) {
       chai
         .request(server)
+        .keepOpen()
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
         .query({ stock: ["AMZN", "T"] })
@@ -66,6 +70,7 @@ suite('Functional Tests', function () {
     test("Viewing two stocks and liking them: GET request to /api/stock-prices", function (done) {
       chai
         .request(server)
+        .keepOpen()
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
         .query({ stock: ["AMZN", "T"], like: true })

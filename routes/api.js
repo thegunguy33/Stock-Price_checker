@@ -13,6 +13,7 @@ let mongodb = require('mongodb')
 let mongoose = require('mongoose')
 let XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 
+
 module.exports = function (app) {
   
   let uri = 'mongodb+srv://jaredbennett33:' + process.env.PW + '@cluster0.ibs8sxe.mongodb.net/stock_price_checker?retryWrites=true&w=majority'
@@ -22,7 +23,8 @@ module.exports = function (app) {
   let stockSchema = new mongoose.Schema({
     name: {type: String, required: true},
     likes: {type: Number, default: 0},
-    ips: [String]
+    ips: [String],
+    price: Number
   })
   
   let Stock = mongoose.model('Stock', stockSchema)
@@ -76,7 +78,7 @@ module.exports = function (app) {
       /* Get Price */
       let getPrice = (stockDocument, nextStep) => {
         let xhr = new XMLHttpRequest()
-        let requestUrl = 'https://stock-price-checker-proxy--freecodecamp.repl.co/v1/stock/' + stockDocument['name'] + '/quote'
+        let requestUrl = 'https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/' + stockDocument['name'] + '/quote'
         xhr.open('GET', requestUrl, true)
         xhr.onload = () => {
           let apiResponse = JSON.parse(xhr.responseText);

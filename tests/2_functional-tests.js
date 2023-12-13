@@ -19,6 +19,7 @@ suite('Functional Tests', function() {
       
       test('1 stock', function(done) {
        chai.request(server)
+        .keepOpen()
         .get('/api/stock-prices')
         .query({stock: 'goog'})
         .end(function(err, res){
@@ -30,7 +31,7 @@ suite('Functional Tests', function() {
       });
       
       test('1 stock with like', function(done) {
-        chai.request(server)
+        chai.request(server).keepOpen()
         .get('/api/stock-prices')
         .query({stock: 'aapl', like: true})
         .end(function(err, res){
@@ -42,6 +43,7 @@ suite('Functional Tests', function() {
       
       test('1 stock with like again (ensure likes arent double counted)', function(done) {
         chai.request(server)
+        .keepOpen()
         .get('/api/stock-prices')
         .query({stock: 'aapl', like: true})
         .end(function(err, res){
@@ -52,6 +54,7 @@ suite('Functional Tests', function() {
       
       test('2 stocks', function(done) {
         chai.request(server)
+        .keepOpen()
         .get('/api/stock-prices')
         .query({stock: ['aapl', 'amzn']})
         .end(function(err, res){
@@ -79,6 +82,7 @@ suite('Functional Tests', function() {
       
       test('2 stocks with like', function(done) {
         chai.request(server)
+        .keepOpen()
         .get('/api/stock-prices')
         .query({stock: ['spot', 'amzn'], like: true})
         .end(function(err, res){

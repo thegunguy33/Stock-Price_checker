@@ -27,12 +27,12 @@ suite('Functional Tests', function () {
         .keepOpen()
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
-        .query({ stock: "GOLD", like: true })
+        .query({ stock: "GOOG", like: true })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.body.stockData.stock, "GOLD");
+          assert.equal(res.body.stockData.stock, "GOOG");
           assert.equal(res.body.stockData.likes, 1);
-          assert.exists(res.body.stockData.price, "GOLD has a price");
+          assert.exists(res.body.stockData.price, "GOOG has a price");
           done();
         });
     }).timeout(5000);
@@ -42,12 +42,12 @@ suite('Functional Tests', function () {
         .keepOpen()
         .get("/api/stock-prices/")
         .set("content-type", "application/json")
-        .query({ stock: "GOLD", like: true })
+        .query({ stock: "GOOG", like: true })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.body.stockData.stock, "GOLD");
+          assert.equal(res.body.stockData.stock, "GOOG");
           assert.equal(res.body.stockData.likes, 1);
-          assert.exists(res.body.stockData.price, "GOLD has a price");
+          assert.exists(res.body.stockData.price, "GOOG has a price");
           done();
         });
     }).timeout(5000);

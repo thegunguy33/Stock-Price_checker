@@ -1,20 +1,19 @@
-const chaiHttp = require('chai-http');
-const chai = require('chai');
+const chaiHttp = require("chai-http");
+const chai = require("chai");
 const assert = chai.assert;
-const server = require('../server');
+const server = require("../server");
 
 chai.use(chaiHttp);
 
-suite('Functional Tests', function () {
+suite("Functional Tests", function () {
   suite("5 functional get request tests", function () {
     test("Viewing one stock: GET request to /api/stock-prices", function (done) {
       chai
         .request(server)
         .keepOpen()
         .get("/api/stock-prices/")
-        .set("content-type", "application/json")
         .query({ stock: "GOOG" })
-        .end(function (err, res) {
+        .end((err, res) => {
           assert.equal(res.status, 200);
           assert.equal(res.body.stockData.stock, "GOOG");
           assert.exists(res.body.stockData.price, "GOOG has a price");
@@ -26,9 +25,8 @@ suite('Functional Tests', function () {
         .request(server)
         .keepOpen()
         .get("/api/stock-prices/")
-        .set("content-type", "application/json")
         .query({ stock: "GOOG", like: true })
-        .end(function (err, res) {
+        .end((err, res) => {
           assert.equal(res.status, 200);
           assert.equal(res.body.stockData.stock, "GOOG");
           assert.equal(res.body.stockData.likes, 1);
@@ -41,9 +39,8 @@ suite('Functional Tests', function () {
         .request(server)
         .keepOpen()
         .get("/api/stock-prices/")
-        .set("content-type", "application/json")
         .query({ stock: "GOOG", like: true })
-        .end(function (err, res) {
+        .end((err, res) => {
           assert.equal(res.status, 200);
           assert.equal(res.body.stockData.stock, "GOOG");
           assert.equal(res.body.stockData.likes, 1);
@@ -56,9 +53,8 @@ suite('Functional Tests', function () {
         .request(server)
         .keepOpen()
         .get("/api/stock-prices/")
-        .set("content-type", "application/json")
         .query({ stock: ["AMZN", "T"] })
-        .end(function (err, res) {
+        .end((err, res) => {
           assert.equal(res.status, 200);
           assert.equal(res.body.stockData[0].stock, "AMZN");
           assert.equal(res.body.stockData[1].stock, "T");
@@ -72,9 +68,8 @@ suite('Functional Tests', function () {
         .request(server)
         .keepOpen()
         .get("/api/stock-prices/")
-        .set("content-type", "application/json")
         .query({ stock: ["AMZN", "T"], like: true })
-        .end(function (err, res) {
+        .end((err, res) => {
           assert.equal(res.status, 200);
           assert.equal(res.body.stockData[0].stock, "AMZN");
           assert.equal(res.body.stockData[1].stock, "T");
@@ -85,12 +80,10 @@ suite('Functional Tests', function () {
           done();
         });
     }).timeout(5000);
-  })
+  });
   // Viewing one stock: GET request to /api/stock-prices/
   // Viewing one stock and liking it: GET request to /api/stock-prices/
   // Viewing the same stock and liking it again: GET request to /api/stock-prices/
   // Viewing two stocks: GET request to /api/stock-prices/
   // Viewing two stocks and liking them: GET request to /api/stock-prices/
-
-
 });
